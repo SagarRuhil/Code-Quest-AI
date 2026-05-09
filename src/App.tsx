@@ -140,9 +140,9 @@ function LandingPage() {
   const handleGoogleLogin = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      console.error("Login failed", error);
-      setError("Google login failed. Please try again.");
+    } catch (err: any) {
+      console.error("Google login error", err);
+      setError(err.message || "Google login failed. Please try again.");
     }
   };
 
@@ -234,8 +234,28 @@ function LandingPage() {
                 </div>
 
                 {error && (
-                  <div className="p-4 bg-brand/10 border border-brand/20 text-brand text-xs font-mono">
-                    {error}
+                  <div className="p-4 bg-brand/10 border border-brand/20 text-brand space-y-2">
+                    <p className="text-xs font-mono font-bold uppercase">System Error:</p>
+                    <p className="text-[11px] font-sans leading-relaxed">{error}</p>
+                    {error.includes("operation-not-allowed") && (
+                      <div className="mt-2 text-[10px] text-ink/60 border-t border-brand/20 pt-2 space-y-1">
+                        <p className="font-bold">How to fix:</p>
+                        <p>1. Go to Firebase Console &gt; Authentication</p>
+                        <p>2. Enable "Google" and "Email/Password" providers.</p>
+                      </div>
+                    )}
+                    {error.includes("unauthorized-domain") && (
+                      <div className="mt-2 text-[10px] text-ink/60 border-t border-brand/20 pt-2 space-y-1">
+                        <p className="font-bold">How to fix:</p>
+                        <p>1. Go to Firebase Console &gt; Authentication &gt; Settings &gt; Authorized domains</p>
+                        <p>2. Add this domain to the list: <code className="bg-brand/5 px-1">{window.location.hostname}</code></p>
+                      </div>
+                    )}
+                    {error.includes("popup-closed-by-user") && (
+                      <div className="mt-2 text-[10px] text-ink/60 border-t border-brand/20 pt-2 space-y-1">
+                        <p>It looks like you closed the login window before completing the quest.</p>
+                      </div>
+                    )}
                   </div>
                 )}
 
