@@ -1,3 +1,7 @@
+https://code-quest-ai-sage.vercel.app/ 
+Here is the live and working link.
+
+
 # Code Quest AI Bot - Setup & Hosting Guide
 
 Welcome to **Code Quest AI Bot**! This guide will walk you through setting up the project on your local machine and hosting it for the world to see.
