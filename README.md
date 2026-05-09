@@ -2,77 +2,148 @@ https://code-quest-ai-sage.vercel.app/
 Here is the live and working link.
 
 
-# Code Quest AI Bot - Setup & Hosting Guide
+# Code Quest AI Bot 🚀
+**Code Quest AI Bot** is a next-generation, adaptive programming tutor designed to bridge the gap between static tutorials and personalized mentorship. By leveraging Large Language Models (LLMs) and real-time cognitive tracking, Code Quest crafts a unique learning path for every developer.
 
-Welcome to **Code Quest AI Bot**! This guide will walk you through setting up the project on your local machine and hosting it for the world to see.
+---
 
-## 1. Local Development Setup
+## 📖 Table of Contents
+- [Overview](#-overview)
+- [Core Features](#-core-features)
+- [How It Works (Architecture)](#-how-it-works-architecture)
+- [Intelligence & NLP](#-intelligence--nlp)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [Deployment Guide](#-deployment-guide)
+- [Troubleshooting](#-troubleshooting)
 
-To run this project locally, you'll need **Node.js** (v18 or higher) installed on your computer.
+---
 
-### Step 1: Install Dependencies
-Open your terminal in the project folder and run:
+## 🏛️ Overview
+
+Traditional coding platforms often suffer from "one-size-fits-all" syndrome. Code Quest solves this by implementing an **Adaptive Learning Engine**. The system continuously monitors user performance across quizzes, challenges, and conversations to dynamically adjust the curriculum's difficulty and depth.
+
+---
+
+## ✨ Core Features
+
+- **Adaptive AI Mentorship:** Direct integration with Google Gemini for sophisticated, context-aware programming guidance.
+- **Dynamic Skill Leveling:** A gamified XP system that tracks progress across Python, JavaScript, Database Architecture, and more.
+- **Cognitive Guardrails:** An intelligent quiz system that analyzes "misconception patterns" to prevent learning plateaus.
+- **Persistent Persona:** Secure authentication and data persistence ensuring your progress is synchronized across devices.
+- **Minimalist Academic UI:** A focus-driven interface designed using Swiss design principles for maximum readability and zero distraction.
+
+---
+
+## 🧠 How It Works (Architecture)
+
+### 1. The Feedback Loop
+Every interaction follows a four-step cycle:
+1.  **Ingestion:** The user's query and current profile (level, XP, previous errors) are packaged into a high-context prompt.
+2.  **Processing:** Google Gemini analyzes the intent and determines if the user needs a conceptual explanation, a code walkthrough, or a diagnostic challenge.
+3.  **Validation:** AI-generated code is sanitized and presented via Markdown for clear syntax highlighting.
+4.  **Persistence:** Your "Cognitive State" is updated in Firebase Firestore, refining the AI's understanding of your skills.
+
+### 2. Gamification Logic
+- **XP (Experience Points):** Awarded for completing challenges and engaging in technical discourse.
+- **Levels:** Unlocked as XP thresholds are met, which in turn unlocks more complex AI personas (e.g., from "Junior Guide" to "Senior Architect").
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework:** React 19 (Functional Components, Hooks API)
+- **Build Tool:** Vite (High-performance HMR)
+- **Styling:** Tailwind CSS 4.0 (Utility-first, responsive)
+- **Animations:** Motion (Staggered entrances, layout transitions)
+- **Markdown:** React Markdown (Rich text rendering)
+
+### Backend & AI
+- **Authentication:** Firebase Auth (Google & Email/Password)
+- **Database:** Cloud Firestore (NoSQL, Real-time)
+- **AI Agent:** Google Gemini API (`@google/genai`)
+
+---
+
+## 🔬 Intelligence & NLP
+
+Code Quest utilizes **Transformer-based Language Models** to perform high-level NLP tasks:
+- **Semantic Mapping:** Determining the "semantic distance" between a user's answer and the correct programming concept.
+- **Synthetic Feedback Generation:** Creating personalized responses that address *why* an error occurred, rather than just stating it's wrong.
+- **Dynamic Prompt Engineering:** Automatically adjusting the AI's system instruction based on the user's current "Quest Category."
+
+---
+
+## 📂 Project Structure
+
+```text
+├── src/
+│   ├── components/       # Reusable UI components (shadcn-based)
+│   ├── lib/              # Firebase configuration & Auth Context
+│   ├── services/         # Gemini API integration & prompt logic
+│   ├── types.ts          # Global TypeScript interfaces
+│   ├── App.tsx           # Main application entry & Routing
+│   └── main.tsx          # React application root
+├── firebase-blueprint.json # Database schema definition
+└── firestore.rules       # Security rules for data protection
+```
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- Node.js v18+
+- [Google AI Studio Key](https://aistudio.google.com/)
+- [Firebase Project](https://console.firebase.google.com/)
+
+### 2. Installations
 ```bash
+git clone <your-repo-url>
+cd code-quest-ai
 npm install
 ```
 
-### Step 2: Configure Environment Variables
-You need to provide your API keys for the app to function. 
-1. Create a file named `.env` in the root directory.
-2. Copy the contents from `.env.example` into `.env`.
-3. Fill in your **GEMINI_API_KEY**. You can get one from the [Google AI Studio](https://aistudio.google.com/).
-4. (Optional) If you manually set up a new Firebase project, update the values in `firebase-applet-config.json`.
+### 3. Environment Configuration
+Create a `.env` file:
+```env
+VITE_GEMINI_API_KEY=your_key_here
+```
+*Note: Update `firebase-applet-config.json` with your project's specific Firebase credentials.*
 
-### Step 3: Start the Development Server
-Run the following command:
+### 4. Local Execution
 ```bash
 npm run dev
 ```
-Your app will be available at `http://localhost:3000`.
 
 ---
 
-## 2. Hosting the Project
+## 🌐 Deployment Guide
 
-Since this project uses **Firebase** for its database and authentication, the easiest way to host it is using **Firebase Hosting**.
-
-### Option A: Firebase Hosting (Recommended)
-1. Install Firebase CLI: `npm install -g firebase-tools`
-2. Login: `firebase login`
-3. Initialize: `firebase init` (Select **Hosting**, use the existing project if prompted).
-4. For the public directory, choose `dist`.
-5. Configure as a single-page app: `Yes`.
-6. Set up automatic builds and deploys with GitHub: `Optional`.
-7. **Deploy:** 
-   ```bash
-   npm run build
-   firebase deploy
-   ```
-
-### Option B: Vercel or Netlify
-1. Connect your GitHub repository to [Vercel](https://vercel.com/) or [Netlify](https://www.netlify.com/).
-2. Set the **Build Command** to `npm run build`.
-3. Set the **Output Directory** to `dist`.
-4. **Important:** Add your environment variables (like `GEMINI_API_KEY`) in the Vercel/Netlify dashboard settings.
+### Vercel (Recommended)
+1. Push your code to a GitHub repository.
+2. Link the repository to your [Vercel Dashboard](https://vercel.com).
+3. **Environment Variables:** Add `VITE_GEMINI_API_KEY` in the project settings.
+4. Set Build Command: `npm run build`, Output Directory: `dist`.
 
 ---
 
-## 3. Troubleshooting (Blank Page)
+## ⚠️ Troubleshooting
 
-If you see a blank white page when running locally:
-1. **Open the Console:** Press `F12` or `Ctrl+Shift+I` and look for errors in the "Console" tab.
-2. **Firebase Config:** Ensure `firebase-applet-config.json` exists in the root folder.
-3. **Environment Variables:** Ensure you have `.env` file with `GEMINI_API_KEY`.
-4. **Node Version:** Ensure you are using Node.js v18 or newer.
-5. **Clean Install:** Delete `node_modules` and run `npm install` again.
+### Firebase Auth Issues
+If you encounter `auth/operation-not-allowed` or `Google login failed`:
+1.  **Enable Providers:** Go to Firebase Console > Authentication > Sign-in method. Enable **Google** and **Email/Password**.
+2.  **Authorized Domains:** Ensure your hosting domain (e.g., `localhost` or your Vercel URL) is added in Authentication > Settings > Authorized domains.
 
-## 4. Project Structure
-- `src/`: Modern React frontend code.
-- `src/services/geminiService.ts`: Integration with Google Gemini AI.
-- `firestore.rules`: Security configuration for your database.
-- `index.html`: The entry point for the browser.
+### Gemini API Errors
+- Ensure your API key is active and has "Gemini API" access enabled in Google AI Studio.
+- Verify that your `.env` variable is correctly prefixed with `VITE_`.
 
 ---
 
-## Need Help?
-Check the `REPORT_STRUCTURE.md` or `PROJECT_REPORT.html` in this directory for deep technical details about the system architecture.
+## 📜 License
+Created for technical learners everywhere. Built with ❤️ and AI.
+
+
