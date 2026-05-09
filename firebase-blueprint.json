@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores user education progress and profile data",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "currentLevel": { "type": "integer", "description": "Current learning level (1, 2, 3...)" },
+        "totalXp": { "type": "integer", "description": "User's accumulated experience points" },
+        "programmingInterests": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "createdAt"]
+    },
+    "Message": {
+      "title": "Chat Message",
+      "description": "A single piece of conversation between user and AI",
+      "type": "object",
+      "properties": {
+        "role": { "type": "string", "enum": ["user", "assistant"] },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "userId": { "type": "string" }
+      },
+      "required": ["role", "content", "timestamp", "userId"]
+    },
+    "Quiz": {
+      "title": "Quiz Session",
+      "description": "Records the outcome of a quiz taken by the user",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "topic": { "type": "string" },
+        "score": { "type": "integer" },
+        "totalQuestions": { "type": "integer" },
+        "difficulty": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "feedback": { "type": "string" }
+      },
+      "required": ["userId", "topic", "score", "totalQuestions", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Private user profile records"
+    },
+    "/users/{userId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Chat history for a specific user"
+    },
+    "/users/{userId}/quizzes/{quizId}": {
+      "schema": "Quiz",
+      "description": "User quiz history and performance"
+    }
+  }
+}

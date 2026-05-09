@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // User Profile Rules
+    match /users/{userId} {
+      function isValidUser(data) {
+        return data.uid == request.auth.uid 
+          && data.email is string
+          && (data.displayName == null || data.displayName is string)
+          && (data.photoURL == null || data.photoURL is string)
+          && (data.currentLevel == null || data.currentLevel is int)
+          && (data.totalXp == null || data.totalXp is int)
+          && (data.programmingInterests == null || data.programmingInterests is list)
+          && data.createdAt == request.time;
+      }
+
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) 
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'photoURL', 'currentLevel', 'totalXp', 'programmingInterests', 'updatedAt']);
+
+      // Messages subcollection
+      match /messages/{messageId} {
+        function isValidMessage(data) {
+          return data.userId == request.auth.uid
+            && data.role in ['user', 'assistant']
+            && data.content is string
+            && data.content.size() < 10000
+            && data.timestamp == request.time;
+        }
+
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidMessage(request.resource.data);
+      }
+
+      // Quizzes subcollection
+      match /quizzes/{quizId} {
+        function isValidQuiz(data) {
+          return data.userId == request.auth.uid
+            && data.topic is string
+            && data.score is int
+            && data.totalQuestions is int
+            && data.timestamp == request.time;
+        }
+
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidQuiz(request.resource.data);
+      }
+    }
+  }
+}
