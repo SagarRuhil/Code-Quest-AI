@@ -105,6 +105,22 @@ function MainApp() {
 
         </AnimatePresence>
       </main>
+
+      <footer className="border-t border-ink/10 px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <span className="font-mono text-[10px] font-bold">© 2026 · CODE QUEST AI BOT</span>
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink/40">
+          Designed and Developed by{" "}
+          <a 
+            href="https://v0-sagarruhil.vercel.app/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-brand hover:text-brand/80 transition-colors underline decoration-brand/20 underline-offset-4"
+          >
+            Sagar
+          </a>
+        </span>
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest">FILED UNDER: EDUCATION / NLP / PROMPTING</span>
+      </footer>
     </div>
   );
 }
@@ -375,8 +391,19 @@ function LandingPage() {
         )}
       </main>
 
-      <footer className="border-t border-ink/10 px-8 py-8 flex items-center justify-between">
+      <footer className="border-t border-ink/10 px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <span className="font-mono text-[10px] font-bold">© 2026 · CODE QUEST AI BOT</span>
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink/40">
+          Designed and Developed by{" "}
+          <a 
+            href="https://v0-sagarruhil.vercel.app/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-brand hover:text-brand/80 transition-colors underline decoration-brand/20 underline-offset-4"
+          >
+            Sagar
+          </a>
+        </span>
         <span className="font-mono text-[10px] font-bold uppercase tracking-widest">FILED UNDER: EDUCATION / NLP / PROMPTING</span>
       </footer>
     </div>
