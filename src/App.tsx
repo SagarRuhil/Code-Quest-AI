@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AuthProvider, useAuth } from "./lib/AuthContext";
-import { LogIn, GraduationCap, LayoutDashboard, MessageSquare, BrainCircuit, LogOut, Loader2, Book, ArrowRight, ArrowLeft } from "lucide-react";
+import { LogIn, GraduationCap, LayoutDashboard, MessageSquare, BrainCircuit, LogOut, Loader2, Book, ArrowRight, ArrowLeft, Sparkles, Heart } from "lucide-react";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "./lib/firebase";
 import { motion, AnimatePresence } from "motion/react";
@@ -15,7 +15,12 @@ function MainApp() {
   if (loading) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-quest" id="loading-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-brand" />
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <Sparkles className="w-12 h-12 text-brand" />
+        </motion.div>
       </div>
     );
   }
@@ -25,42 +30,53 @@ function MainApp() {
   }
 
   return (
-    <div className="min-h-screen bg-quest flex flex-col font-sans" id="app-container">
+    <div className="min-h-screen bg-quest flex flex-col font-sans relative overflow-hidden" id="app-container">
+      {/* Decorative Blobs */}
+      <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-brand/5 blur-[120px] rounded-full -z-10" />
+      <div className="absolute bottom-[-10%] left-[-5%] w-[30vw] h-[30vw] bg-accent/20 blur-[100px] rounded-full -z-10" />
+
       {/* Navigation */}
-      <header className="sticky top-0 z-50 w-full border-b border-ink/10 bg-quest/90 backdrop-blur-sm px-4 py-4 sm:px-12">
+      <header className="sticky top-0 z-50 w-full bg-white/70 backdrop-blur-md px-6 py-4 sm:px-12 border-b border-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="font-serif text-2xl font-bold tracking-tight">Code Quest AI Bot</h1>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-brand rounded-2xl flex items-center justify-center shadow-lg shadow-brand/20">
+              <GraduationCap className="text-white w-6 h-6" />
+            </div>
+            <h1 className="font-serif text-2xl font-bold tracking-tight text-ink hidden sm:block">Code Quest</h1>
           </div>
 
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="flex items-center bg-ink/5 p-1 rounded-2xl">
             <NavButton 
               active={activeTab === "dashboard"} 
               onClick={() => setActiveTab("dashboard")}
-              label="DASHBOARD"
+              label="Overview"
+              icon={<LayoutDashboard className="w-4 h-4" />}
             />
             <NavButton 
               active={activeTab === "chat"} 
               onClick={() => setActiveTab("chat")}
-              label="CHAT"
+              label="Terminal"
+              icon={<MessageSquare className="w-4 h-4" />}
             />
             <NavButton 
               active={activeTab === "quiz"} 
               onClick={() => setActiveTab("quiz")}
-              label="QUIZ"
+              label="Field Test"
+              icon={<BrainCircuit className="w-4 h-4" />}
             />
-
           </nav>
 
-          <div className="flex items-center gap-6">
-            <div className="hidden md:flex flex-col items-end">
-              <span className="font-mono text-[10px] uppercase tracking-widest font-bold">{profile?.displayName}</span>
+          <div className="flex items-center gap-4">
+            <div className="hidden lg:flex flex-col items-end">
+              <span className="font-mono text-[10px] uppercase tracking-widest font-bold text-ink/70">Active Agent</span>
+              <span className="font-sans text-xs font-bold text-ink">{profile?.displayName}</span>
             </div>
             <button 
               onClick={() => signOut(auth)} 
-              className="border border-ink px-4 py-1.5 font-mono text-[10px] hover:bg-ink hover:text-white transition-all uppercase tracking-widest font-bold"
+              className="w-10 h-10 flex items-center justify-center rounded-xl bg-ink/5 hover:bg-brand/10 hover:text-brand transition-all"
+              title="Sign Out"
             >
-              Sign Out
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -72,20 +88,21 @@ function MainApp() {
           {activeTab === "dashboard" && (
             <motion.div
               key="dashboard"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ type: "spring", stiffness: 100, damping: 20 }}
               className="flex-1 overflow-auto"
             >
-              <Dashboard onNavigateChat={() => setActiveTab("chat")} />
+              <Dashboard onNavigateChat={() => setActiveTab("chat")} onNavigateQuiz={() => setActiveTab("quiz")} />
             </motion.div>
           )}
           {activeTab === "chat" && (
             <motion.div
               key="chat"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
               className="flex-1 flex flex-col overflow-hidden"
             >
               <ChatInterface />
@@ -94,50 +111,59 @@ function MainApp() {
           {activeTab === "quiz" && (
             <motion.div
               key="quiz"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
               className="flex-1 overflow-auto"
             >
               <QuizMode />
             </motion.div>
           )}
-
         </AnimatePresence>
       </main>
 
-      <footer className="border-t border-ink/10 px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <span className="font-mono text-[10px] font-bold">© 2026 · CODE QUEST AI BOT</span>
-        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink/40">
-          Designed and Developed by{" "}
-          <a 
-            href="https://v0-sagarruhil.vercel.app/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-brand hover:text-brand/80 transition-colors underline decoration-brand/20 underline-offset-4"
-          >
-            Sagar
-          </a>
-        </span>
-        <span className="font-mono text-[10px] font-bold uppercase tracking-widest">FILED UNDER: EDUCATION / NLP / PROMPTING</span>
+      <footer className="border-t border-ink/5 px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-6 bg-white/30 backdrop-blur-sm">
+        <div className="flex flex-col items-center md:items-start gap-1">
+          <span className="font-mono text-[10px] font-bold text-ink/80 tracking-widest uppercase">© 2026 · CODE QUEST AI BOT</span>
+          <span className="font-mono text-[9px] text-ink/65 uppercase tracking-widest font-bold">Encrypted Education Network</span>
+        </div>
+        
+        <div className="flex items-center gap-2 px-6 py-2 bg-white/50 border border-white rounded-full shadow-sm">
+          <Heart className="w-3 h-3 text-brand fill-brand" />
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink/80">
+            Designed and Developed by{" "}
+            <a 
+              href="https://v0-sagarruhil.vercel.app/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-brand hover:text-brand/80 transition-colors underline decoration-brand/20 underline-offset-4"
+            >
+              Sagar
+            </a>
+          </span>
+        </div>
+
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink/75">v1.2 · Powered by Gemini</span>
       </footer>
     </div>
   );
 }
 
-function NavButton({ active, onClick, label }: { active: boolean, onClick: () => void, label: string }) {
+function NavButton({ active, onClick, label, icon }: { active: boolean, onClick: () => void, label: string, icon: React.ReactNode }) {
   return (
     <button
       onClick={onClick}
-      className={`font-mono text-xs font-bold tracking-[0.2em] transition-all relative py-1 ${
-        active ? "text-ink" : "text-ink/40 hover:text-ink"
+      className={`flex items-center gap-2 px-4 py-2 font-sans text-xs font-bold transition-all rounded-xl relative ${
+        active ? "text-ink bg-white shadow-sm" : "text-ink/75 hover:text-ink/90"
       }`}
     >
-      {label}
+      {icon}
+      <span className="hidden md:block transition-all">{label}</span>
       {active && (
         <motion.div 
-          layoutId="nav-underline"
-          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-ink"
+          layoutId="nav-pill"
+          className="absolute inset-0 bg-white rounded-xl -z-10 shadow-sm"
+          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
         />
       )}
     </button>
@@ -181,230 +207,234 @@ function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-quest flex flex-col overflow-hidden relative selection:bg-brand selection:text-white">
+    <div className="min-h-screen bg-quest flex flex-col overflow-hidden relative selection:bg-brand/20 selection:text-ink">
+      {/* Decorative Background */}
+      <div className="absolute top-0 left-0 w-full h-[60vh] bg-gradient-to-b from-brand/5 to-transparent -z-10" />
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.4, 0.3],
+          x: [0, 50, 0],
+          y: [0, -30, 0]
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[20%] right-[10%] w-96 h-96 bg-accent/20 blur-[100px] rounded-full -z-10" 
+      />
+
       {/* Header */}
-      <nav className="w-full border-b border-ink/10 px-8 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h1 className="font-serif text-xl font-bold">Code Quest AI Bot</h1>
+      <nav className="w-full px-8 py-8 flex items-center justify-between max-w-7xl mx-auto">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-brand rounded-2xl flex items-center justify-center shadow-lg shadow-brand/20">
+            <GraduationCap className="text-white w-6 h-6" />
+          </div>
+          <h1 className="font-serif text-2xl font-bold text-ink">Code Quest</h1>
         </div>
-        <div className="flex items-center gap-8">
-          <button onClick={() => setAuthMode("login")} className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink/60 hover:text-ink">SIGN IN</button>
-          <button onClick={() => setAuthMode("signup")} className="quest-btn bg-brand border-brand">
-            BEGIN 
-            <ArrowRight className="w-3 h-3" />
+        <div className="flex items-center gap-2">
+          <button onClick={() => setAuthMode("login")} className="px-6 py-2 rounded-full font-sans text-xs font-bold text-ink/80 hover:text-ink transition-colors">Sign In</button>
+          <button onClick={() => setAuthMode("signup")} className="quest-btn">
+            Begin Journey 
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </nav>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-8 pt-20 pb-12 flex flex-col">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-8 pt-12 pb-24 flex flex-col items-center">
         <AnimatePresence mode="wait">
           {authMode === "landing" ? (
             <motion.div 
               key="landing"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="w-full flex flex-col items-center text-center space-y-12"
             >
-              <div className="lg:col-span-8 space-y-8">
-                <span className="quest-label">LEVEL I · CODE EXPEDITION</span>
-                <h2 className="text-7xl sm:text-9xl font-serif leading-[0.9] text-ink">
-                  A tutor that <i className="font-normal italic">masters</i> your <span className="text-brand">learning quest.</span>
-                </h2>
-                <p className="text-xl text-ink/70 font-serif max-w-xl leading-relaxed">
-                  Embark on a personal coding journey. We track your progress, identify weak spots, and guide you through challenges — one quest at a time.
-                </p>
+              <div className="space-y-6 max-w-4xl">
+                <motion.span 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="quest-label"
+                >
+                  Version 2.0 · Now with AI Narration
+                </motion.span>
+                <motion.h2 
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, type: "spring", stiffness: 50 }}
+                  className="text-6xl sm:text-8xl font-serif leading-[1] text-ink font-bold"
+                >
+                  Learn code with a tutor <br/>
+                  <span className="text-brand italic font-medium">that grows with you.</span>
+                </motion.h2>
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="text-xl text-ink/85 font-sans max-w-2xl mx-auto leading-relaxed"
+                >
+                  Embark on a personal coding journey. We track your cognitive flow, identify weak spots, and bridge knowledge gaps through AI-driven mentorship.
+                </motion.p>
                 
-                <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                  <button onClick={() => setAuthMode("signup")} className="quest-btn h-14 px-8 text-sm">START YOUR QUEST</button>
-                  <button onClick={() => setAuthMode("login")} className="quest-btn-outline h-14 px-8 text-sm">RESUME JOURNEY</button>
-                </div>
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 }}
+                  className="flex flex-col sm:flex-row gap-4 justify-center pt-8"
+                >
+                  <button onClick={() => setAuthMode("signup")} className="quest-btn h-14 px-10 text-sm shadow-xl shadow-brand/20">START MY QUEST</button>
+                  <button onClick={() => setAuthMode("login")} className="quest-btn-outline h-14 px-10 text-sm bg-white/50 backdrop-blur-sm">RESUME PROGRESS</button>
+                </motion.div>
               </div>
 
-              <div className="lg:col-span-4 mt-12 lg:mt-0">
-                <div className="folio-card p-8 space-y-6">
-                  <span className="quest-label">QUEST CATEGORIES</span>
-                  <div className="space-y-6">
-                    <SpecimenItem num="01" code="PY-03" title="Python Mastery" desc="logic - syntax - algorithms" />
-                    <SpecimenItem num="02" code="JS-07" title="Web Wizardy" desc="dom - events - async - react" />
-                    <SpecimenItem num="03" code="OO-02" title="Architectural Craft" desc="patterns - design - scalability" />
-                    <SpecimenItem num="04" code="DB-05" title="Data Sanctum" desc="sql - nosql - optimization" />
-                  </div>
-                </div>
-              </div>
+              {/* Specs Grid */}
+              <motion.div 
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1 }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full pt-12"
+              >
+                <SpecimenItem num="01" code="NLP" title="Adaptive Voice" desc="Calm female narration for all AI responses." />
+                <SpecimenItem num="02" code="LLM" title="Google Gemini" desc="Powered by next-gen reasoning models." />
+                <SpecimenItem num="03" code="SQL" title="Cloud Sync" desc="Your progress follows you everywhere." />
+                <SpecimenItem num="04" code="CSS" title="Soft-Pro UI" desc="A playful yet professional aesthetic." />
+              </motion.div>
             </motion.div>
           ) : (
             <motion.div 
               key="auth"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="max-w-md mx-auto w-full py-12"
+              exit={{ opacity: 0, scale: 1.05 }}
+              className="max-w-md mx-auto w-full py-6"
             >
-              <div className="folio-card p-8 space-y-8">
+              <div className="folio-card p-10 space-y-10">
                 <div className="space-y-2 text-center">
-                  <span className="quest-label">{authMode === "signup" ? "NEW RECRUIT" : "RETURNING AGENT"}</span>
+                  <span className="quest-label">{authMode === "signup" ? "INITIALIZING MISSION" : "RETURNING AGENT"}</span>
                   <h3 className="text-4xl font-serif font-bold">
-                    {authMode === "signup" ? "Create Account" : "Welcome Back"}
+                    {authMode === "signup" ? "Create Profile" : "Access Console"}
                   </h3>
                 </div>
 
                 {error && (
-                  <div className="p-4 bg-brand/10 border border-brand/20 text-brand space-y-2">
-                    <p className="text-xs font-mono font-bold uppercase">System Error:</p>
-                    <p className="text-[11px] font-sans leading-relaxed">{error}</p>
-                    {error.includes("operation-not-allowed") && (
-                      <div className="mt-2 text-[10px] text-ink/60 border-t border-brand/20 pt-2 space-y-1">
-                        <p className="font-bold">How to fix:</p>
-                        <p>1. Go to Firebase Console &gt; Authentication</p>
-                        <p>2. Enable "Google" and "Email/Password" providers.</p>
-                      </div>
-                    )}
-                    {error.includes("unauthorized-domain") && (
-                      <div className="mt-2 text-[10px] text-ink/60 border-t border-brand/20 pt-2 space-y-1">
-                        <p className="font-bold">How to fix:</p>
-                        <p>1. Go to Firebase Console &gt; Authentication &gt; Settings &gt; Authorized domains</p>
-                        <p>2. Add this domain to the list: <code className="bg-brand/5 px-1">{window.location.hostname}</code></p>
-                      </div>
-                    )}
-                    {error.includes("popup-closed-by-user") && (
-                      <div className="mt-2 text-[10px] text-ink/60 border-t border-brand/20 pt-2 space-y-1">
-                        <p>It looks like you closed the login window before completing the quest.</p>
-                      </div>
-                    )}
-                  </div>
+                  <motion.div 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="p-5 bg-brand/5 border border-brand/20 rounded-2xl text-brand space-y-2"
+                  >
+                    <p className="text-[11px] font-sans leading-relaxed flex items-center gap-2">
+                       <span className="w-1.5 h-1.5 bg-brand rounded-full animate-pulse" />
+                       {error}
+                    </p>
+                  </motion.div>
                 )}
 
-                <form onSubmit={handleEmailAuth} className="space-y-4">
+                <form onSubmit={handleEmailAuth} className="space-y-5">
                   {authMode === "signup" && (
-                    <div className="space-y-1">
-                      <label className="quest-label !text-[9px]">Full Name</label>
+                    <div className="space-y-1.5">
+                      <label className="quest-label !bg-transparent !p-0">User Identifier</label>
                       <input 
                         type="text" 
                         required 
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-quest border-2 border-ink/10 p-3 font-sans focus:border-brand focus:outline-none transition-colors"
-                        placeholder="Ada Lovelace"
+                        className="w-full bg-quest border border-ink/10 rounded-2xl p-4 font-sans focus:border-brand focus:ring-4 focus:ring-brand/5 focus:outline-none transition-all placeholder:text-ink/20"
+                        placeholder="John Doe"
                       />
                     </div>
                   )}
-                  <div className="space-y-1">
-                    <label className="quest-label !text-[9px]">Email Address</label>
+                  <div className="space-y-1.5">
+                    <label className="quest-label !bg-transparent !p-0">Email Address</label>
                     <input 
                       type="email" 
                       required 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-quest border-2 border-ink/10 p-3 font-sans focus:border-brand focus:outline-none transition-colors"
-                      placeholder="ada@quest.io"
+                      className="w-full bg-quest border border-ink/10 rounded-2xl p-4 font-sans focus:border-brand focus:ring-4 focus:ring-brand/5 focus:outline-none transition-all placeholder:text-ink/20"
+                      placeholder="agent@quest.ai"
                     />
                   </div>
-                  <div className="space-y-1">
-                    <label className="quest-label !text-[9px]">Security Cipher (Password)</label>
+                  <div className="space-y-1.5">
+                    <label className="quest-label !bg-transparent !p-0">Access Cipher</label>
                     <input 
                       type="password" 
                       required 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-quest border-2 border-ink/10 p-3 font-sans focus:border-brand focus:outline-none transition-colors"
+                      className="w-full bg-quest border border-ink/10 rounded-2xl p-4 font-sans focus:border-brand focus:ring-4 focus:ring-brand/5 focus:outline-none transition-all placeholder:text-ink/20"
                       placeholder="••••••••"
                     />
                   </div>
 
                   <button 
                     disabled={isSubmitting}
-                    className="quest-btn w-full h-12 mt-4 disabled:opacity-50"
+                    className="quest-btn w-full h-14 mt-4 shadow-xl shadow-brand/20 disabled:scale-100 disabled:bg-ink/50"
                     type="submit"
                   >
                     {isSubmitting ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Loader2 className="w-5 h-5 animate-spin" />
                     ) : (
-                      authMode === "signup" ? "INITIALIZE ACCOUNT" : "ACCESS SYSTEM"
+                      authMode === "signup" ? "Create Account" : "Access Terminal"
                     )}
                   </button>
                 </form>
 
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-ink/10"></div></div>
-                  <div className="relative flex justify-center text-[10px] uppercase font-mono bg-white px-4 text-ink/40">OR</div>
+                <div className="flex items-center gap-4 text-ink/20">
+                  <div className="h-[1px] flex-1 bg-current" />
+                  <span className="font-mono text-[9px] font-bold text-ink/65">SECURE LINK</span>
+                  <div className="h-[1px] flex-1 bg-current" />
                 </div>
 
                 <button 
                   onClick={handleGoogleLogin} 
-                  className="w-full border-2 border-ink/10 p-3 flex items-center justify-center gap-3 hover:bg-ink/5 transition-colors font-mono text-[10px] font-bold tracking-widest"
+                  className="w-full border border-ink/10 rounded-2xl p-4 flex items-center justify-center gap-3 hover:bg-neutral-50 transition-all font-sans text-xs font-bold"
                 >
                   <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
-                  AUTHENTICATE WITH GOOGLE
+                  Continue with Google
                 </button>
 
-                <div className="text-center pt-4">
+                <div className="text-center pt-2">
                   <button 
                     onClick={() => setAuthMode(authMode === "signup" ? "login" : "signup")}
-                    className="font-mono text-[10px] text-ink/60 hover:text-ink underline decoration-brand underline-offset-4"
+                    className="font-mono text-[10px] text-ink/70 hover:text-brand font-bold uppercase tracking-wider transition-colors"
                   >
-                    {authMode === "signup" ? "ALREADY HAS ACCESS? LOGIN" : "NEED NEW ACCESS? SIGN UP"}
+                    {authMode === "signup" ? "Existing Member? Login" : "New Recruit? Join Today"}
                   </button>
                 </div>
                 
-                <div className="text-center">
-                  <button 
-                    onClick={() => setAuthMode("landing")}
-                    className="font-mono text-[9px] text-ink/40 hover:text-ink flex items-center justify-center gap-2 mx-auto"
-                  >
-                    <ArrowLeft className="w-3 h-3" /> BACK TO SURFACE
-                  </button>
-                </div>
+                <button 
+                  onClick={() => setAuthMode("landing")}
+                  className="w-full text-center font-mono text-[10px] text-ink/50 hover:text-ink/70 transition-colors uppercase font-bold tracking-widest pt-4"
+                >
+                  ← Return to Surface
+                </button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-
-        {authMode === "landing" && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-auto pt-20"
-          >
-            <div className="quest-divider" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mt-12">
-              <Benefit 
-                num="I."
-                label="PHASE 1"
-                title="Interactive Guidance"
-                desc="Our AI analyzes your messages to provide personalized explanations and code snippets tailored to your current knowledge."
-              />
-              <Benefit 
-                num="II."
-                label="PHASE 2"
-                title="Memory Loop"
-                desc="Code Quest remembers your past mistakes and successes, ensuring you never repeat common errors and always face relevant challenges."
-              />
-              <Benefit 
-                num="III."
-                label="PHASE 3"
-                title="Adaptive Challenges"
-                desc="Quizzes adjust in real-time. If you're excelling, we push your boundaries. If you're struggling, we reinforce the foundations."
-              />
-            </div>
-          </motion.div>
-        )}
       </main>
 
-      <footer className="border-t border-ink/10 px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <span className="font-mono text-[10px] font-bold">© 2026 · CODE QUEST AI BOT</span>
-        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink/40">
-          Designed and Developed by{" "}
-          <a 
-            href="https://v0-sagarruhil.vercel.app/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-brand hover:text-brand/80 transition-colors underline decoration-brand/20 underline-offset-4"
-          >
-            Sagar
-          </a>
-        </span>
-        <span className="font-mono text-[10px] font-bold uppercase tracking-widest">FILED UNDER: EDUCATION / NLP / PROMPTING</span>
+      <footer className="border-t border-ink/5 px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-6 bg-white/30 backdrop-blur-sm">
+        <div className="flex flex-col items-center md:items-start gap-1">
+          <span className="font-mono text-[10px] font-bold text-ink/80 tracking-widest uppercase">© 2026 · CODE QUEST AI BOT</span>
+          <span className="font-mono text-[9px] text-ink/65 uppercase tracking-widest font-bold">Encrypted Education Network</span>
+        </div>
+        
+        <div className="flex items-center gap-2 px-6 py-2 bg-white/50 border border-white rounded-full shadow-sm">
+          <Heart className="w-3 h-3 text-brand fill-brand" />
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink/80">
+            Designed and Developed by{" "}
+            <a 
+              href="https://v0-sagarruhil.vercel.app/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-brand hover:text-brand/80 transition-colors underline decoration-brand/20 underline-offset-4"
+            >
+              Sagar
+            </a>
+          </span>
+        </div>
+
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink/75">v1.2 · Powered by Gemini</span>
       </footer>
     </div>
   );
@@ -412,26 +442,13 @@ function LandingPage() {
 
 function SpecimenItem({ num, code, title, desc }: { num: string, code: string, title: string, desc: string }) {
   return (
-    <div className="space-y-1 relative pb-4 border-b border-ink/5 last:border-0 last:pb-0">
-      <div className="flex items-baseline gap-3">
-        <span className="font-serif italic text-brand text-sm">{num}</span>
-        <span className="font-mono text-[10px] font-bold text-ink/40 tracking-wider ">{code}</span>
-        <h4 className="font-serif text-xl font-bold">{title}</h4>
+    <div className="folio-card p-6 flex flex-col items-center text-center space-y-3 bg-white/50 backdrop-blur-sm group">
+      <div className="flex items-baseline gap-2">
+        <span className="font-serif italic text-brand font-bold">{num}</span>
+        <span className="font-mono text-[9px] font-bold text-brand/70 tracking-widest">{code}</span>
       </div>
-      <p className="font-mono text-[10px] text-ink/60 pl-8 lowercase">{desc}</p>
-    </div>
-  );
-}
-
-function Benefit({ num, label, title, desc }: { num: string, label: string, title: string, desc: string }) {
-  return (
-    <div className="space-y-4">
-      <span className="text-4xl font-serif italic text-brand">{num}</span>
-      <div className="space-y-2">
-        <span className="quest-label">{label}</span>
-        <h4 className="text-2xl font-bold">{title}</h4>
-        <p className="text-ink/60 text-sm leading-relaxed">{desc}</p>
-      </div>
+      <h4 className="font-serif text-lg font-bold text-ink">{title}</h4>
+      <p className="font-sans text-[11px] text-ink/75 leading-relaxed">{desc}</p>
     </div>
   );
 }
