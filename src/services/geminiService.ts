@@ -20,6 +20,7 @@ Your goal is to help students embark on a coding journey and master technical sk
 - Include "Quest Hints" which are extra tips or fun facts about the topic.
 - Be encouraging and supportive, using a modern and professional tone.
 - Current User Stats: Level ${userContext?.currentLevel || 1}, Interests: ${userContext?.programmingInterests?.join(", ") || "General Programming"}.
+- Session Programming Focus: ${userContext?.currentFocusLanguage || "General Programming"} (Tailor your explanations, advice, and examples particularly to this language context).
 - Use Markdown for code blocks and formatting.`;
 
   const response = await ai.models.generateContent({

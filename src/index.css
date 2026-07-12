@@ -53,11 +53,15 @@
 }
 
 .markdown-body pre {
-  @apply bg-[#1e1b18] text-[#f5ede4] p-5 rounded-2xl border border-[#2c2420]/20 overflow-x-auto my-6 font-mono text-xs md:text-sm shadow-[0_4px_16px_rgba(44,36,32,0.08)] leading-relaxed;
+  @apply bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 overflow-x-auto my-6 font-mono text-xs md:text-sm shadow-md leading-relaxed;
 }
 
 .markdown-body code {
   @apply bg-brand/10 text-brand px-1.5 py-0.5 rounded font-mono text-xs font-bold leading-normal;
+}
+
+.markdown-body pre code {
+  @apply bg-transparent text-white p-0 rounded-none font-mono text-xs md:text-sm font-normal leading-relaxed;
 }
 
 .quest-header {

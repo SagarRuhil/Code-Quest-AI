@@ -54,6 +54,7 @@ service cloud.firestore {
         allow list: if isOwner(userId);
         allow get: if isOwner(userId);
         allow create: if isOwner(userId) && isValidMessage(request.resource.data);
+        allow delete: if isOwner(userId);
       }
 
       // Quizzes subcollection
